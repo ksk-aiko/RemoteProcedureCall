@@ -1,0 +1,24 @@
+@startuml
+participant Client
+participant Server
+
+== Initialization ==
+activate Server
+Server -> Server : Start listening
+
+== Communication ==
+Client -> Server : Send Request(method="subtract", params=[42, 23], id=1)
+activate Client
+
+Server -> Server : Parse Request
+Server -> Server : Execute Requested Method
+alt Successful Execution
+    Server -> Client : Send Response(results=19, result_type="int", id=1)
+else Error Occurred
+    Server -> Server : Handle Error
+    Server -> Client : Send Error Response(error="Error details", id=1)
+end
+
+deactivate Client
+deactivate Server
+@enduml

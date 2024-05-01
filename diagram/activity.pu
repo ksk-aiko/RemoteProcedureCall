@@ -1,0 +1,27 @@
+@startuml
+start
+
+:Client sends request;
+
+-> Server;
+:Receive request;
+
+if (Request valid?) then (yes)
+  :Parse request;
+  :Execute RPC function;
+  if (Error in function?) then (no)
+    :Create success response;
+  else (yes)
+    :Handle error;
+    :Create error response;
+  endif
+else (no)
+  :Create error response for invalid request;
+endif
+
+:Send response to client;
+-> Client;
+:Client processes response;
+
+stop
+@enduml

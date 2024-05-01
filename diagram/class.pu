@@ -1,0 +1,56 @@
+@startuml
+
+class Server {
+    +listen()
+    +acceptConnection()
+}
+
+class RequestHandler {
+    +handleRequest()
+    +parseRequest()
+    +sendResponse()
+}
+
+class RPCFunctions {
+    +floor(double x)
+    +nroot(int n, int x)
+    +reverse(String s)
+    +validAnagram(String str1, String str2)
+    +sort(String[] arr)
+}
+
+class ErrorHandler {
+    +handleError()
+    +logError()
+}
+
+class Logger {
+    +logInfo(String info)
+    +logError(String error)
+}
+
+class Client {
+    +connectToServer()
+    +sendRequest()
+    +receiveResponse()
+}
+
+class RequestBuilder {
+    +buildRequest(String method, Object[] params)
+}
+
+class ResponseHandler {
+    +handleResponse(String jsonResponse)
+}
+
+Server --> RequestHandler : uses
+RequestHandler --> RPCFunctions : calls
+RequestHandler --> ErrorHandler : uses
+ErrorHandler --> Logger : uses
+Server --> Logger : uses
+
+Client --> RequestBuilder : uses
+Client --> Server : sends requests to
+Client --> ResponseHandler : uses
+
+@enduml

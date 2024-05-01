@@ -1,0 +1,30 @@
+@startuml
+package "Client Application" {
+    [Client Module]
+    [Request Builder]
+    [Response Handler]
+}
+
+package "Server Application" {
+    [Server Module]
+    [Request Handler]
+    [RPC Functions]
+    [Error Handler]
+    [Logger]
+}
+
+[Network Interface]
+
+[Client Module] -right-> [Network Interface] : sends/receives data
+[Network Interface] -left-> [Server Module] : sends/receives data
+
+[Database]
+
+[Server Module] ..> [Request Handler] : use
+[Request Handler] ..> [RPC Functions] : use
+[Request Handler] ..> [Error Handler] : use
+[Error Handler] ..> [Logger] : log errors
+
+[Logger] ..> [Database] : optional logging
+
+@enduml
