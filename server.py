@@ -29,6 +29,7 @@ class Server:
                 response = RequestHandler.handleRequest(parsed_request)
                 RequestHandler.sendResponse(connection, response)
                 connection.close()
+
 class RPCFunctions:
     # xを最も近い整数に切り捨て、その値を返す
     def floor(x):
@@ -52,6 +53,13 @@ class RPCFunctions:
     def sort(s):
         return sorted(s)
     
+class ErrorHandler:
+    def handle_error():
+        print('An error occurred')
+    
+    def log_error():
+        print('Error logged')
+
 class RequestHandler:
     rpc_methods = {
         'floor': RPCFunctions.floor,
@@ -62,9 +70,19 @@ class RequestHandler:
     }
 
     def parseRequest(request):
-        parsed_request = json.loads(request.decode())
-        print('Parsed request:', parsed_request)
-        return parsed_request
+        try:
+            parsed_request = json.loads(request.decode())
+            print('Parsed request:', parsed_request)
+            return parsed_request
+        except json.JSONDecodeError:
+            print('Error!! Invalid JSON format')
+            return {"error": "Invalid JSON format"}
+        except json.UnicodeDecodeError:
+            print('Error!! Invalid Unicode')
+            return {"error": "Invalid Unicode"}
+        except Exception as e:
+            print('Error!! An error occurred while parsing the request:', e)
+            return {"error": "An error occurred while parsing the request"}
 
     def handleRequest(parsed_request):
         print('Please wait a moment. Processing your request....')

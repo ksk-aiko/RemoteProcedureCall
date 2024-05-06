@@ -1,5 +1,5 @@
 const { type } = require("os");
-// TODO: エラーケースを追加する
+
 class Client {
   static connectToServer(client) {
     // サーバーアドレスを指定
