@@ -1,3 +1,5 @@
+const net = require("net");
+const readline = require("readline");
 const { type } = require("os");
 
 class Client {
@@ -60,7 +62,6 @@ class RequestBuilder {
   static buildRequest() {
     return new Promise((resolve, reject) => {
       // ユーザーからの入力を受け取り、'method', 'params', 'params_type', 'id'をJSON形式で返す
-      const readline = require("readline");
       const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout,
@@ -125,7 +126,6 @@ class RequestBuilder {
 }
 
 function main() {
-  const net = require("net");
   const client = new net.Socket();
   client.setTimeout(30000);
   Client.connectToServer(client).then((client) => {

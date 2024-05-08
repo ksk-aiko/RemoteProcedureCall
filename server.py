@@ -4,21 +4,25 @@ import json
 import math
 
 class Server:
-    def accept_connections(server):
-        server_address = 'socket_file'
+
+    def __init__(self):
+        self.server_address = 'socket_file'
+        self.server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+    def accept_connections(self):
         try:
-            os.unlink(server_address)
+            os.unlink(self.server_address)
         except FileNotFoundError:
             pass
-        server.bind(server_address)
+        self.server.bind(self.server_address)
         print('Server started')
 
-    def listen(server):
+    def listen(self):
         # 30秒間クライアントからの接続を待ち、接続がない場合はタイムアウトする
-        server.settimeout(30)
-        server.listen(1)
+        self.server.settimeout(30)
+        self.server.listen(1)
         while True:
-            connection, client_address = server.accept()
+            connection, client_address = self.server.accept()
             print('Connection from', client_address)
             while True:
                 data = connection.recv(1024)
@@ -82,7 +86,7 @@ class RequestHandler:
             return {"error": "Invalid Unicode"}
         except Exception as e:
             print('Error!! An error occurred while parsing the request:', e)
-            return {"error": "An error occurred while parsing the request"}
+            return {"error": "An error occurred while parsing the request: " + str(e)},
 
     def handleRequest(parsed_request):
         print('Please wait a moment. Processing your request....')
@@ -113,8 +117,7 @@ class RequestHandler:
             }
         except Exception as e:
             response = {
-            'error': 'An error occurred while processing the request',
-            'error_message': str(e),
+            'error': 'An error occurred while processing the request: ' + str(e),
             'id': parsed_request['id']
             }
             print('Error:', e)
@@ -129,9 +132,8 @@ class RequestHandler:
             print('Error occurred while sending response:', e)
 
 def main():
-    server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    server.settimeout(30)
-    Server.accept_connections(server)
-    Server.listen(server)
+    server = Server()
+    server.accept_connections()
+    server.listen()
 
 main()
