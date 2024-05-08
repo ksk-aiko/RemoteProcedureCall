@@ -33,7 +33,7 @@ class Server:
 class RPCFunctions:
     # xを最も近い整数に切り捨て、その値を返す
     def floor(x):
-        return math.floor(x)
+        return math.floor(float(x))
     
     # 方程式r ** n = xを満たすrを求める
     def nroot(x, n):
@@ -93,24 +93,40 @@ class RequestHandler:
 
         response = {}
 
-        if request_method == 'nroot' or request_method == 'validAnagram':
+        try:
+            if request_method == 'nroot' or request_method == 'validAnagram':
+                response = {
+                    'results': RequestHandler.rpc_methods[request_method](request_params[0], request_params[1]),
+                    'result_type': request_param_type,
+                    'id': parsed_request['id']
+                }
+            else:
+                response = {
+                    'results': RequestHandler.rpc_methods[request_method](request_params),
+                    'result_type': request_param_type,
+                    'id': parsed_request['id']
+                }
+        except KeyError:
             response = {
-                'results': RequestHandler.rpc_methods[request_method](request_params[0], request_params[1]),
-                'result_type': request_param_type,
-                'id': parsed_request['id']
+            'error': 'Invalid method',
+            'id': parsed_request['id']
             }
-        else:
+        except Exception as e:
             response = {
-                'results': RequestHandler.rpc_methods[request_method](request_params),
-                'result_type': request_param_type,
-                'id': parsed_request['id']
+            'error': 'An error occurred while processing the request',
+            'error_message': str(e),
+            'id': parsed_request['id']
             }
+            print('Error:', e)
 
         return response
      
     def sendResponse(connection, response):
-        connection.sendall(json.dumps(response).encode())
-        print('Response sent:', response)
+        try:
+            connection.sendall(json.dumps(response).encode())
+            print('Response sent:', response)
+        except Exception as e:
+            print('Error occurred while sending response:', e)
 
 def main():
     server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
